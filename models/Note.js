@@ -4,7 +4,7 @@ const noteSchema = new mongoose.Schema({ // esquema para los datos
   date: Date,
   important: Boolean
 })
-noteSchema.set('toJSON', {
+noteSchema.set('toJSON', { // para cambiar la forma en que se realiza el toJSON de la respuesta
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id
     delete returnedObject._id

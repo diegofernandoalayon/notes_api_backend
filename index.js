@@ -1,3 +1,4 @@
+require('dotenv').config() // importamos dotenv y ejecutamos metodo
 require('./mongo.js') // se puede importar directamente debio a que se ejecuta y se cachea no hace falta funcion
 const express = require('express')
 const cors = require('cors')
@@ -62,7 +63,7 @@ app.use((request, response) => {
   })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log('Server running on port ' + PORT)
 })
