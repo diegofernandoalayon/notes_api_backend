@@ -25,31 +25,35 @@ app.get('/api/notes', (request, response) => {
     })
 })
 app.get('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const note = notes.find((note) => note.id === id)
-  if (note) {
-    response.json(note)
-  } else {
-    response.status(404).end()
-  }
-  // response.json(notes)
+  const id = request.params.id
+  // const note = notes.find((note) => note.id === id)
+  Note.findById(id)
+    .then(note => {
+      if (note) {
+        response.json(note)
+      } else {
+        response.status(404).end()
+      }
+    }).catch(err => {
+      console.error(err)
+      response.status(400).end()
+    })
 })
 app.post('/api/notes', (request, response) => {
   const note = request.body
-  if (!note || !note.title) {
+  if (!note || !note.content) {
     return response.status(400).json({ error: 'note.content is missing' })
   }
-  const ids = notes.map((note) => note.id)
-  const maxId = Math.max(...ids)
-  const newNote = {
-    userId: 1,
-    id: maxId + 1,
-    title: note.title,
-    body: note.body
-  }
-  notes = [...notes, newNote]
+  const newNote = new Note({
+    content: note.content,
+    date: new Date(),
+    important: note.important || false
+  })
 
-  response.status(201).json(newNote)
+  newNote.save()
+    .then(savedNote => {
+      response.json(savedNote)
+    })
 })
 app.delete('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
