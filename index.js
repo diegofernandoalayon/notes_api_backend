@@ -9,12 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 const path = require('path')
-let notes = []
 
-// const app = http.createServer((request, response) => {
-//     response.writeHead(200,{'Content-Type':'application/json'})
-//     response.end(JSON.stringify(notes))
-// })
 app.get('/', (request, response) => {
   response.sendFile(path.resolve(__dirname, 'index.html'))
 })
@@ -24,9 +19,8 @@ app.get('/api/notes', (request, response) => {
       response.json(notes)
     })
 })
-app.get('/api/notes/:id', (request, response) => {
+app.get('/api/notes/:id', (request, response, next) => {
   const id = request.params.id
-  // const note = notes.find((note) => note.id === id)
   Note.findById(id)
     .then(note => {
       if (note) {
@@ -35,8 +29,8 @@ app.get('/api/notes/:id', (request, response) => {
         response.status(404).end()
       }
     }).catch(err => {
-      console.error(err)
-      response.status(400).end()
+      next(err) // de esta manera pasamos al siguiente middleware para manejar los errores
+      // response.status(400).end()
     })
 })
 app.post('/api/notes', (request, response) => {
@@ -55,13 +49,39 @@ app.post('/api/notes', (request, response) => {
       response.json(savedNote)
     })
 })
-app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter((note) => note.id !== id)
-  response.status(204).end()
-})
+app.put('/api/notes/:id', (request, response, next) => {
+  const { id } = request.params
+  const note = request.body
 
-app.use((request, response) => {
+  const newNoteInfo = {
+    content: note.content,
+    important: note.important
+  }
+
+  // para actualizar la nota con la nueva info
+  Note.findByIdAndUpdate(id, newNoteInfo, { new: true })
+    .then(result => {
+      response.json(result)
+    })
+})
+app.delete('/api/notes/:id', (request, response, next) => {
+  const id = request.params.id
+  Note.findByIdAndDelete(id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
+})
+app.use((error, request, response, next) => { // middleware para manejo de errores
+  // console.error(error)
+  // console.log(error.name)
+  if (error.name === 'CastError') {
+    response.status(400).end()
+  } else {
+    response.status(500).end()
+  }
+})
+app.use((request, response) => { // debe ir al final para que no exista problema
   response.status(404).json({
     error: 'Not found'
   })
