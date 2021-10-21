@@ -7,6 +7,7 @@ const Note = require('./models/Note')
 
 app.use(cors())
 app.use(express.json())
+app.use('/cosas', express.static(__dirname)) // __dirname es una env que indica la ruta absoluta que contiene el archivo que se esta ejecutando
 
 const path = require('path')
 const notFound = require('./middleware/notFound.js')
