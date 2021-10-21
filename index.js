@@ -9,6 +9,8 @@ app.use(cors())
 app.use(express.json())
 
 const path = require('path')
+const notFound = require('./middleware/notFound.js')
+const handleErrors = require('./middleware/handleErrors.js')
 
 app.get('/', (request, response) => {
   response.sendFile(path.resolve(__dirname, 'index.html'))
@@ -72,20 +74,8 @@ app.delete('/api/notes/:id', (request, response, next) => {
     })
     .catch(error => next(error))
 })
-app.use((error, request, response, next) => { // middleware para manejo de errores
-  // console.error(error)
-  // console.log(error.name)
-  if (error.name === 'CastError') {
-    response.status(400).end()
-  } else {
-    response.status(500).end()
-  }
-})
-app.use((request, response) => { // debe ir al final para que no exista problema
-  response.status(404).json({
-    error: 'Not found'
-  })
-})
+app.use(handleErrors)
+app.use(notFound)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
