@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
-
-const connectionString = process.env.MONGO_DB_URI
+const { MONGO_DB_URI, MONGO_DB_URI_TEST, NODE_ENV } = process.env
+const connectionString = NODE_ENV === 'test' // dependiendo del entorno de ejecucion usa una db u otra
+  ? MONGO_DB_URI
+  : MONGO_DB_URI_TEST
 
 // conexión a mongodb
 
