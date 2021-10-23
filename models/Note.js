@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+// require('../mongo')
 const noteSchema = new mongoose.Schema({ // esquema para los datos
   content: String,
   date: Date,
@@ -16,13 +17,8 @@ const Note = mongoose.model('Note', noteSchema) //
 
 module.exports = Note
 
-// Note.find({}).then(result => {
-//   console.log(result)
-//   mongoose.connection.close()
-// })
-
 // const note = new Note({
-//   content: 'Hola mundillo vidilla',
+//   content: 'Hello kitty',
 //   date: new Date(),
 //   important: false
 // })
@@ -32,3 +28,8 @@ module.exports = Note
 //     mongoose.connection.close()
 //   })
 //   .catch(err => console.error(err))
+
+// Note.find({}).then(result => {
+//   console.log(result)
+//   mongoose.connection.close()
+// })

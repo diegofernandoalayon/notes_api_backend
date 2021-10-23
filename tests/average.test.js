@@ -1,6 +1,6 @@
 const { average } = require('../utils/for_testing')
 
-describe('average', () => { // es una forma de describir el contexto de todos los test
+describe.skip('average', () => { // es una forma de describir el contexto de todos los test
   test('of one value is the value itself', () => {
     expect(average([1])).toBe(1)
   })
