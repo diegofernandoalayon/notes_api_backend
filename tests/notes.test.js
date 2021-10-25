@@ -52,6 +52,33 @@ test('the first note is about Bootcamp', async () => {
   expect(contents).toContain('Aprendiendo FullStack bootcamp')
 })
 
+test('a valid note can be added', async () => {
+  const newNote = {
+    content: 'Proximamente async/await',
+    important: true
+  }
+  await api
+    .post('/api/notes')
+    .send(newNote)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/notes')
+  const contents = response.body.map(note => note.content)
+
+  expect(response.body).toHaveLength(initialNotes.length + 1)
+  expect(contents).toContain(newNote.content)
+})
+
+test('note without content is not added', async () => {
+  const newNote = {
+    important: true
+  }
+  await api.post('/api/notes').send(newNote).expect(400)
+
+  const response = await api.get('/api/notes')
+  expect(response.body).toHaveLength(initialNotes.length)
+})
 afterAll(() => { // es un hook que se ejecuta despues de todo
   mongoose.connection.close()
   server.close()
