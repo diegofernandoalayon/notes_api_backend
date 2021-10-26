@@ -16,11 +16,11 @@ const handleErrors = require('./middleware/handleErrors.js')
 app.get('/', (request, response) => {
   response.sendFile(path.resolve(__dirname, 'index.html'))
 })
-app.get('/api/notes', (request, response) => {
-  Note.find({})
-    .then(notes => {
-      response.json(notes)
-    })
+app.get('/api/notes', async (request, response) => {
+  const notes = await Note.find({})
+  // .then(notes => {
+  // })
+  response.json(notes)
 })
 app.get('/api/notes/:id', (request, response, next) => {
   const id = request.params.id

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
-const supertest = require('supertest')
-const { app, server } = require('../index')
+
+const { server } = require('../index')
 const Note = require('../models/Note')
 
-const api = supertest(app)
+const { initialNotes, api, getAllContentFromNotes } = require('./helpers')
 
 test('notes are returned as json', async () => { // indicamos que es asincrono y debe esperar
   await api
@@ -12,23 +12,6 @@ test('notes are returned as json', async () => { // indicamos que es asincrono y
     .expect('Content-Type', /application\/json/)
 })
 
-const initialNotes = [
-  {
-    content: 'Aprendiendo FullStack bootcamp',
-    important: true,
-    date: new Date()
-  },
-  {
-    content: 'Hola mundo',
-    important: false,
-    date: new Date()
-  },
-  {
-    content: 'Casa de todo',
-    important: false,
-    date: new Date()
-  }
-]
 beforeEach(async () => {
   await Note.deleteMany({}) // borramos todas las notas
 
@@ -41,14 +24,14 @@ beforeEach(async () => {
   await note3.save()
 })
 test('there are two notes', async () => { // indicamos que es asincrono y debe esperar
-  const response = await api
-    .get('/api/notes')
+  const { response } = await getAllContentFromNotes()
+  // const response = await api
+  //   .get('/api/notes')
   expect(response.body).toHaveLength(initialNotes.length)
 })
 
 test('the first note is about Bootcamp', async () => {
-  const response = await api.get('/api/notes')
-  const contents = response.body.map(note => note.content)
+  const { contents } = await getAllContentFromNotes()
   expect(contents).toContain('Aprendiendo FullStack bootcamp')
 })
 
@@ -63,8 +46,7 @@ test('a valid note can be added', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/notes')
-  const contents = response.body.map(note => note.content)
+  const { response, contents } = await getAllContentFromNotes()
 
   expect(response.body).toHaveLength(initialNotes.length + 1)
   expect(contents).toContain(newNote.content)
