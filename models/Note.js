@@ -3,7 +3,11 @@ const mongoose = require('mongoose')
 const noteSchema = new mongoose.Schema({ // esquema para los datos
   content: String,
   date: Date,
-  important: Boolean
+  important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId, // para asignar una relacion entre notas y usuarios
+    ref: 'User' // referencia al modelo de User
+  }
 })
 noteSchema.set('toJSON', { // para cambiar la forma en que se realiza el toJSON de la respuesta
   transform: (document, returnedObject) => {

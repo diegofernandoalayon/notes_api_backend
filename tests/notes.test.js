@@ -15,13 +15,16 @@ test('notes are returned as json', async () => { // indicamos que es asincrono y
 beforeEach(async () => {
   await Note.deleteMany({}) // borramos todas las notas
 
-  // initialNotes.forEach(elemen => new Note(elemen).save())
-  const note1 = new Note(initialNotes[0])
-  await note1.save()
-  const note2 = new Note(initialNotes[1])
-  await note2.save()
-  const note3 = new Note(initialNotes[2])
-  await note3.save()
+  // paralell
+  // const notesObjects = initialNotes.map(note => new Note(note))
+  // const promises = notesObjects.map(note => note.save())
+  // await Promise.all(promises)
+
+  // sequential
+  for (const note of initialNotes) {
+    const noteObject = new Note(note)
+    await noteObject.save()
+  }
 })
 test('there are two notes', async () => { // indicamos que es asincrono y debe esperar
   const { response } = await getAllContentFromNotes()
