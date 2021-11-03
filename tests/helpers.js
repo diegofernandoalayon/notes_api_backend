@@ -1,6 +1,8 @@
 const supertest = require('supertest')
 const { app } = require('../index')
 const api = supertest(app)
+const User = require('../models/User')
+
 const initialNotes = [
   {
     content: 'Aprendiendo FullStack bootcamp',
@@ -27,8 +29,14 @@ const getAllContentFromNotes = async () => {
   }
 }
 
+const getAllUsers = async () => {
+  const usersDBAfter = await User.find({})
+  return usersDBAfter.map(user => user.toJSON())
+}
+
 module.exports = {
   api,
   getAllContentFromNotes,
-  initialNotes
+  initialNotes,
+  getAllUsers
 }
