@@ -18,7 +18,10 @@ app.get('/', (request, response) => {
   response.sendFile(path.resolve(__dirname, 'index.html'))
 })
 app.get('/api/notes', async (request, response) => {
-  const notes = await Note.find({})
+  const notes = await Note.find({}).populate('user', {
+    username: 1,
+    name: 1
+  })
   // .then(notes => {
   // })
   response.json(notes)
