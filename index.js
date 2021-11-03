@@ -12,6 +12,7 @@ app.use('/cosas', express.static(__dirname)) // __dirname es una env que indica 
 const path = require('path')
 const notFound = require('./middleware/notFound.js')
 const handleErrors = require('./middleware/handleErrors.js')
+const User = require('./models/User.js')
 
 app.get('/', (request, response) => {
   response.sendFile(path.resolve(__dirname, 'index.html'))
@@ -36,21 +37,30 @@ app.get('/api/notes/:id', (request, response, next) => {
       // response.status(400).end()
     })
 })
-app.post('/api/notes', (request, response) => {
-  const note = request.body
-  if (!note || !note.content) {
+app.post('/api/notes', async (request, response, next) => {
+  const {
+    content,
+    important = false,
+    userId
+  } = request.body
+  const user = await User.findById(userId)
+  if (!content) {
     return response.status(400).json({ error: 'note.content is missing' })
   }
   const newNote = new Note({
-    content: note.content,
+    content,
     date: new Date(),
-    important: note.important || false
+    important,
+    user: user._id
   })
-
-  newNote.save()
-    .then(savedNote => {
-      response.json(savedNote)
-    })
+  try {
+    const savedNote = await newNote.save()
+    user.notes = user.notes.concat(savedNote._id)
+    await user.save()
+    response.json(savedNote)
+  } catch (error) {
+    next(error)
+  }
 })
 app.put('/api/notes/:id', (request, response, next) => {
   const { id } = request.params

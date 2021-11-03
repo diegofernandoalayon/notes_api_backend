@@ -3,7 +3,8 @@ content-type: application/json
 
 {
     "content":"Desde mongo",
-    "important":true
+    "important":true,
+    "userId":"6182ad33b505251a9ec9b31e"
 }
 ###
 
