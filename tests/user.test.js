@@ -34,6 +34,26 @@ describe('creating a new user', () => {
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
   })
+  test('creation fails with proper statuscode and message if username', async () => {
+    const usersAtStart = await getAllUsers()
+
+    const newUser = {
+      username: 'dfar',
+      name: 'Diego',
+      password: 'holamundo'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error.errors.username.message).toContain('`username` to be unique')
+
+    const usersAtEnd = await getAllUsers()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
   afterAll(() => { // es un hook que se ejecuta despues de todo
     mongoose.connection.close()
     server.close()
