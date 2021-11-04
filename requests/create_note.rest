@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/notes  HTTP/1.1
 content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxODJiNjExNmJmMGFkZjlmNjQ5YzllOSIsInVzZXJuYW1lIjoiZGZhciIsImlhdCI6MTYzNjAzODU0MCwiZXhwIjoxNjM2NjQzMzQwfQ.6ZY0yHXhQGBPSamW4yBYYjoCrSeXr6edwKjJr3e1Uaw
 
 {
-    "content":"Desde mongo",
-    "important":true,
-    "userId":"6182b6116bf0adf9f649c9e9"
+    "content":"sin userId prueba",
+    "important":true
 }
 ###
 
