@@ -1,7 +1,8 @@
 
 const notesRouter = require('express').Router()
 // const e = require('express')
-const jwt = require('jsonwebtoken')
+// const jwt = require('jsonwebtoken')
+const userExtractor = require('../middleware/userExtractor')
 const Note = require('../models/Note')
 const User = require('../models/User')
 
@@ -26,24 +27,13 @@ notesRouter.get('/:id', (request, response, next) => {
       // response.status(400).end()
     })
 })
-notesRouter.post('/', async (request, response, next) => {
+notesRouter.post('/', userExtractor, async (request, response, next) => {
   const {
     content,
     important = false
   } = request.body
-  const authorization = request.get('authorization')
-  let token = ''
-  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
-    token = authorization.substring(7)
-  }
-  let decodedToken = {}
-  try {
-    decodedToken = jwt.verify(token, process.env.SECRET)
-  } catch {}
-  if (!token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
-  const { id: userId } = decodedToken
+  // sacar userId de request
+  const { userId } = request
   const user = await User.findOne({ userId })
   if (!content) {
     return response.status(400).json({ error: 'note.content is missing' })
@@ -63,7 +53,7 @@ notesRouter.post('/', async (request, response, next) => {
     next(error)
   }
 })
-notesRouter.put('/:id', (request, response, next) => {
+notesRouter.put('/:id', userExtractor, (request, response, next) => {
   const { id } = request.params
   const note = request.body
 
@@ -78,7 +68,7 @@ notesRouter.put('/:id', (request, response, next) => {
       response.json(result)
     })
 })
-notesRouter.delete('/:id', (request, response, next) => {
+notesRouter.delete('/:id', userExtractor, (request, response, next) => {
   const id = request.params.id
   Note.findByIdAndDelete(id)
     .then(result => {
