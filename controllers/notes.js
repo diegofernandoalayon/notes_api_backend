@@ -62,7 +62,7 @@ notesRouter.put('/:id', userExtractor, (request, response, next) => {
     important: note.important
   }
 
-  // para actualizar la nota con la nueva info
+  // para actualizar la nota con la nueva informacion
   Note.findByIdAndUpdate(id, newNoteInfo, { new: true })
     .then(result => {
       response.json(result)
