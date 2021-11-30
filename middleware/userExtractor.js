@@ -10,6 +10,7 @@ module.exports = (request, response, next) => {
   try {
     decodedToken = jwt.verify(token, process.env.SECRET)
   } catch {}
+
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
